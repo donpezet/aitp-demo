@@ -1,0 +1,10 @@
+body {
+  color: red;
+  background-image: url('Moon-page-mockup-01.gif');
+  background-position: top center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-color: black;
+  min-height: 1080px;
+
+}
