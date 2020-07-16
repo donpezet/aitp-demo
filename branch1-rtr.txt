@@ -1,47 +1,17 @@
-!
-! Last configuration change at 15:12:47 EDT Mon Jun 3 2019 by admin
-!
-version 15.6
 service timestamps debug datetime msec
 service timestamps log datetime msec
 no service password-encryption
 !
 hostname branch1-rtr
 !
-boot-start-marker
-boot-end-marker
-!
-!
-!
 aaa new-model
-!
 !
 aaa authentication login default local
 aaa authorization console
 aaa authorization exec default local 
 !
-!
-!
-!
-!
-aaa session-id common
-ethernet lmi ce
-!
-!
-!
 clock timezone EST -5 0
 clock summer-time EDT recurring
-mmi polling-interval 60
-no mmi auto-configure
-no mmi pvc
-mmi snmp-timeout 180
-!
-!
-!
-!
-!
-!
-!
 !
 ip dhcp excluded-address 172.18.1.1 172.18.1.100
 !
@@ -50,22 +20,15 @@ ip dhcp pool branch-lan
  default-router 172.18.1.1 
  dns-server 8.8.8.8 8.8.4.4 
 !
-!
-!
 ip cef
 ipv6 unicast-routing
 ipv6 cef
-!
-multilink bundle-name authenticated
-!
-!
 !
 crypto pki trustpoint TP-self-signed-4294967295
  enrollment selfsigned
  subject-name cn=IOS-Self-Signed-Certificate-4294967295
  revocation-check none
  rsakeypair TP-self-signed-4294967295
-!
 !
 crypto pki certificate chain TP-self-signed-4294967295
  certificate self-signed 01
@@ -91,60 +54,25 @@ crypto pki certificate chain TP-self-signed-4294967295
 username admin privilege 15 secret 5 $1$h/mv$n9geGN6sQAt5o3Ludb8x70
 username cisco privilege 15 secret 5 $1$159m$7wuQ0IV.nC9Ls.cQ1NasR1
 !
-redundancy
-!
-!
-! 
-!
-!
-!
-!
-!
-!
-!
-!
-!
-!
-!
-!
 interface GigabitEthernet0/0
  no shutdown
  ip address 209.1.0.2 255.255.255.252
  ip nat outside
- ip virtual-reassembly in
- duplex auto
- speed auto
- media-type rj45
  ipv6 address 2001::1/64
 !
 interface GigabitEthernet0/1
  no shutdown
  ip address 172.18.1.1 255.255.255.0
  ip nat inside
- ip virtual-reassembly in
- duplex auto
- speed auto
- media-type rj45
  ipv6 address FD00:1::1/64
 !
 interface GigabitEthernet0/2
- no shutdown
  no ip address
  shutdown
- duplex auto
- speed auto
- media-type rj45
 !
 interface GigabitEthernet0/3
- no shutdown
  no ip address
  shutdown
- duplex auto
- speed auto
- media-type rj45
-!
-ip forward-protocol nd
-!
 !
 ip http server
 ip http secure-server
@@ -153,12 +81,7 @@ ip route 0.0.0.0 0.0.0.0 209.1.0.1
 !
 ipv6 route ::/0 2001::99
 !
-!
 access-list 1 permit 172.18.1.0 0.0.0.255
-!
-!
-!
-control-plane
 !
 banner exec ^C ^C
 banner incoming ^C ^C
