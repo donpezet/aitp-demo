@@ -2,7 +2,7 @@ service timestamps debug datetime msec
 service timestamps log datetime msec
 no service password-encryption
 !
-hostname branch2-rtr
+hostname drsite-rtr
 !
 aaa new-model
 !
@@ -13,11 +13,11 @@ aaa authorization exec default local
 clock timezone EST -5 0
 clock summer-time EDT recurring
 !
-ip dhcp excluded-address 172.18.2.1 172.18.2.100
+ip dhcp excluded-address 172.18.254.1 172.18.254.100
 !
 ip dhcp pool branch-lan
- network 172.18.2.0 255.255.255.0
- default-router 172.18.2.1 
+ network 172.18.254.0 255.255.255.0
+ default-router 172.18.254.1 
  dns-server 8.8.8.8 8.8.4.4 
 !
 ip cef
@@ -56,15 +56,15 @@ username cisco privilege 15 secret 5 $1$159m$7wuQ0IV.nC9Ls.cQ1NasR1
 !
 interface GigabitEthernet0/0
  no shutdown
- ip address 209.2.0.2 255.255.255.252
+ ip address 209.1.0.2 255.255.255.252
  ip nat outside
- ipv6 address 2001::2/64
+ ipv6 address 2001::1/64
 !
 interface GigabitEthernet0/1
  no shutdown
- ip address 172.18.2.1 255.255.255.0
+ ip address 172.18.254.1 255.255.255.0
  ip nat inside
- ipv6 address FD00:2::1/64
+ ipv6 address FD00:1::1/64
 !
 interface GigabitEthernet0/2
  no ip address
@@ -78,11 +78,10 @@ ip http server
 ip http secure-server
 ip nat inside source list 1 interface GigabitEthernet0/0 overload
 ip route 0.0.0.0 0.0.0.0 209.1.0.1
-ip route 172.18.254.0 255.255.255.0 209.1.0.3
 !
 ipv6 route ::/0 2001::99
 !
-access-list 1 permit 172.18.2.0 0.0.0.255
+access-list 1 permit 172.18.254.0 0.0.0.255
 !
 banner exec ^C ^C
 banner incoming ^C ^C
