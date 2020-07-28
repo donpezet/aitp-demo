@@ -1,0 +1,100 @@
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname branch2-rtr
+!
+aaa new-model
+!
+aaa authentication login default local
+aaa authorization console
+aaa authorization exec default local 
+!
+clock timezone EST -5 0
+clock summer-time EDT recurring
+!
+ip dhcp excluded-address 172.18.2.1 172.18.2.100
+!
+ip dhcp pool branch-lan
+ network 172.18.2.0 255.255.255.0
+ default-router 172.18.2.1 
+ dns-server 8.8.8.8 8.8.4.4 
+!
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+crypto pki trustpoint TP-self-signed-4294967295
+ enrollment selfsigned
+ subject-name cn=IOS-Self-Signed-Certificate-4294967295
+ revocation-check none
+ rsakeypair TP-self-signed-4294967295
+!
+crypto pki certificate chain TP-self-signed-4294967295
+ certificate self-signed 01
+  3082022B 30820194 A0030201 02020101 300D0609 2A864886 F70D0101 05050030 
+  31312F30 2D060355 04031326 494F532D 53656C66 2D536967 6E65642D 43657274 
+  69666963 6174652D 34323934 39363732 3935301E 170D3139 30363032 31343136 
+  33355A17 0D323030 31303130 30303030 305A3031 312F302D 06035504 03132649 
+  4F532D53 656C662D 5369676E 65642D43 65727469 66696361 74652D34 32393439 
+  36373239 3530819F 300D0609 2A864886 F70D0101 01050003 818D0030 81890281 
+  8100919F D1322520 5E874564 3E061078 54F7F6C1 73BB3BBB B4259E2C 50FB1B3D 
+  A759E09D DB150D71 75EBFB83 DB65BA51 DB77A039 E86F8D25 3EA70F6A F4D98389 
+  691A9892 898285FF 1EE99C89 07245197 D7CD21F0 CA8E4D56 A5461F23 F42709D1 
+  6DE9C2BE 172107FE A0FE0E3C CB0F6520 6DCE713C 6AFE6BF7 7345FDF5 BB91A587 
+  07F50203 010001A3 53305130 0F060355 1D130101 FF040530 030101FF 301F0603 
+  551D2304 18301680 1407735A D0F5E548 B98090B1 F5A3F189 385E6DD2 53301D06 
+  03551D0E 04160414 07735AD0 F5E548B9 8090B1F5 A3F18938 5E6DD253 300D0609 
+  2A864886 F70D0101 05050003 81810051 FB081A99 426CCD74 D066A484 9F68890B 
+  803DB13E A56BED74 B03D17A3 5DF3CA04 50A6CF2D F18B7F24 8F56332A 3F5D6BE1 
+  42344679 2B392326 2F3A04CE 9757D353 6D77C027 B2316AE8 D330134E 55871888 
+  A659C020 F418D902 BE66F966 EDEC682A 52794723 0235A2E3 7069C22E 23E6CF30 
+  94DE9E6D B35CDBF7 6F136D7C DD2D2B
+  quit
+username admin privilege 15 secret 5 $1$h/mv$n9geGN6sQAt5o3Ludb8x70
+username cisco privilege 15 secret 5 $1$159m$7wuQ0IV.nC9Ls.cQ1NasR1
+!
+interface GigabitEthernet0/0
+ no shutdown
+ ip address 209.2.0.2 255.255.255.252
+ ip nat outside
+ ipv6 address 2001::2/64
+!
+interface GigabitEthernet0/1
+ no shutdown
+ ip address 172.18.2.1 255.255.255.0
+ ip nat inside
+ ipv6 address FD00:2::1/64
+!
+interface GigabitEthernet0/2
+ no ip address
+ shutdown
+!
+interface GigabitEthernet0/3
+ no ip address
+ shutdown
+!
+ip http server
+ip http secure-server
+ip nat inside source list 1 interface GigabitEthernet0/0 overload
+ip route 0.0.0.0 0.0.0.0 209.1.0.1
+!
+ipv6 route ::/0 2001::99
+!
+access-list 1 permit 172.18.2.0 0.0.0.255
+!
+banner exec ^C ^C
+banner incoming ^C ^C
+banner login ^C ^C
+!
+line con 0
+ logging synchronous
+line aux 0
+line vty 0 4
+ logging synchronous
+ transport input ssh
+!
+no scheduler allocate
+ntp server 216.239.35.4
+!
+end
